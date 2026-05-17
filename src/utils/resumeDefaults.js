@@ -3,57 +3,87 @@ export const resumeTypes = [
   "College Student",
   "Fresher",
   "Experienced Professional",
-  "Government Job Aspirant",
 ];
 
 export const resumeStorageKey = "op-resume-builder";
 
 export function getInitialResumeState(resumeType) {
-  // Minimal common fields for initial v1 scaffold.
-  // Full spec will be implemented in subsequent iterations.
+  // Premium header/contact fields (ONLY these 3 in requirements)
   const base = {
     fullName: "",
     email: "",
     mobile: "",
+
+    // Social links (optional)
     linkedin: "",
     github: "",
+    leetcode: "",
+    twitter: "",
+    discord: "",
+    youtube: "",
+    portfolio: "",
+
+    // Category marker (for renderer)
+    resumeType,
+
+    // Common
     skills: "",
-    summary: "",
-    projects: "",
-    experience: "",
+
+    // Social/contact helper (not required)
+    careerObjective: "",
+
+    // School Student fields
+    schoolName: "",
+    schoolClass: "",
+    favoriteSubjects: "",
+    academicAchievements: "",
+    sportsAchievements: "",
+    certifications: "",
+    hobbies: "",
+    interests: "",
+    languages: "",
+    extracurricularActivities: "",
+
+    // College Student fields
+    collegeName: "",
+    degree: "",
+    branch: "",
+    currentYear: "",
     education: "",
+    academicProjects: "",
+    internship: "",
+
+    achievements: "",
+
+    // Fresher fields
+    degreeFresher: "",
+    collegeNameFresher: "",
+    projectTitle: "",
+    projectDescription: "",
+    internshipFresher: "",
+    certificationsFresher: "",
+    achievementsFresher: "",
+    languagesFresher: "",
+    interestsFresher: "",
+
+    // Experienced Professional fields
+    professionalSummary: "",
+    experiences: [
+      {
+        companyName: "",
+        designation: "",
+        startDate: "",
+        endDate: "",
+        responsibilities: "",
+        technologiesUsed: "",
+      },
+    ],
+    projects: "",
+    certificationsExperienced: "",
+    educationExperienced: "",
   };
 
-  // Resume-type toggles will be refined later.
-  if (resumeType === "School Student") {
-    return {
-      ...base,
-      schoolName: "",
-      className: "",
-      percentage: "",
-      achievements: "",
-      hobbies: "",
-      languages: "",
-      careerGoal: "",
-      extracurricular: "",
-      interests: "",
-    };
-  }
-
-  if (resumeType === "Government Job Aspirant") {
-    return {
-      ...base,
-      address: "",
-      objective: "",
-      examPreparation: "",
-      achievements: "",
-      hobbies: "",
-      skills: "",
-      languages: "",
-      interests: "",
-    };
-  }
-
-  // Generic for other types
-  return base;
+  // Keep category-specific defaults distinct (don’t share structure across categories)
+  // Ensure resumeType field always matches selected value
+  return { ...base, resumeType };
 }

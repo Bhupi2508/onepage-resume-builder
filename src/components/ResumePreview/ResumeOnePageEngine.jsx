@@ -1,9 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { jsPDF } from "jspdf";
-
-function clamp(n, min, max) {
-  return Math.max(min, Math.min(max, n));
-}
 
 export default function ResumeOnePageEngine({ children, onFitChange }) {
   const wrapRef = useRef(null);
@@ -32,7 +27,7 @@ export default function ResumeOnePageEngine({ children, onFitChange }) {
     let raf = 0;
     const doFit = () => {
       const avail = el.clientHeight;
-      // Try from most natural to compressed
+
       for (let i = 0; i < densities.length; i++) {
         const d = densities[i];
         root.style.transformOrigin = "top left";
@@ -41,7 +36,6 @@ export default function ResumeOnePageEngine({ children, onFitChange }) {
         root.style.gap = `${d.gap}px`;
         root.style.setProperty("--resume-font", `${d.font}px`);
 
-        // Height after transform is tricky; use scrollHeight of unscaled content
         const needed = root.scrollHeight * d.scale;
         const fits = needed <= avail;
         if (fits) {
@@ -51,7 +45,6 @@ export default function ResumeOnePageEngine({ children, onFitChange }) {
         }
       }
 
-      // If nothing fits, pick last density
       const last = densities[densities.length - 1];
       root.style.transform = `scale(${last.scale})`;
       root.style.padding = `${last.pad}px`;
@@ -66,11 +59,8 @@ export default function ResumeOnePageEngine({ children, onFitChange }) {
       raf = requestAnimationFrame(doFit);
     };
 
-    // Resize observer for responsiveness
     const ro = new ResizeObserver(schedule);
     ro.observe(el);
-
-    // Also fit once
     schedule();
 
     return () => {
@@ -80,115 +70,145 @@ export default function ResumeOnePageEngine({ children, onFitChange }) {
     };
   }, [children, densities, onFitChange]);
 
-  // Hook export triggers
   useEffect(() => {
     const handlerPdf = async (e) => {
       const detail = e.detail;
       const root = wrapRef.current?.querySelector("#resume-root");
       if (!root) return;
 
-      // Ensure transform is applied before exporting
-      // html2pdf uses DOM snapshot; give it a tick.
-      await new Promise((r) => setTimeout(r, 80));
+      try {
+        await new Promise((r) => setTimeout(r, 80));
 
-      const html2pdf =
-        (await import("html2pdf.js")).default || (await import("html2pdf.js"));
-      const safeName = ((detail.fullName || "Resume").trim() || "Resume")
-        .replace(/\s+/g, "_")
-        .replace(/[^a-zA-Z0-9_]/g, "");
+        const html2pdf =
+          (await import("html2pdf.js")).default ||
+          (await import("html2pdf.js"));
 
-      const opt = {
-        margin: [0.15, 0.15, 0.15, 0.15],
-        filename: `${safeName}_Resume.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
-      };
+        const safeName = ((detail.fullName || "Resume").trim() || "Resume")
+          .replace(/\s+/g, "_")
+          .replace(/[^a-zA-Z0-9_]/g, "");
 
-      // Use A4 via CSS sizing is more consistent than jsPDF format here.
-      await html2pdf().set(opt).from(root).save();
+        const opt = {
+          margin: [0.15, 0.15, 0.15, 0.15],
+          filename: `${safeName}_Resume.pdf`,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true },
+          jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+        };
+
+        await html2pdf().set(opt).from(root).save();
+      } catch {
+        window.dispatchEvent(
+          new CustomEvent("resume:export-error", {
+            detail: {
+              type: "pdf",
+              message: "PDF export failed. Please try again.",
+            },
+          })
+        );
+      }
     };
 
     const handlerDocx = async (e) => {
       const detail = e.detail;
-      const { Document, Packer, Paragraph, TextRun, HeadingLevel } =
-        await import("docx");
-      const { saveAs } = await import("file-saver");
 
-      const safeName = ((detail.fullName || "Resume").trim() || "Resume")
-        .replace(/\s+/g, "_")
-        .replace(/[^a-zA-Z0-9_]/g, "");
+      try {
+        const { Document, Packer, Paragraph, TextRun, HeadingLevel } =
+          await import("docx");
+        const { saveAs } = await import("file-saver");
 
-      const fullName = detail.fullName || "";
-      const header = [
-        new Paragraph({ text: fullName, heading: HeadingLevel.TITLE }),
-        new Paragraph({ text: detail.email ? `Email: ${detail.email}` : "" }),
-        new Paragraph({
-          text: detail.mobile ? `Mobile: ${detail.mobile}` : "",
-        }),
-        ...(detail.linkedin
-          ? [new Paragraph({ text: `LinkedIn: ${detail.linkedin}` })]
-          : []),
-        ...(detail.github
-          ? [new Paragraph({ text: `GitHub: ${detail.github}` })]
-          : []),
-      ];
+        const safeName = ((detail.fullName || "Resume").trim() || "Resume")
+          .replace(/\s+/g, "_")
+          .replace(/[^a-zA-Z0-9_]/g, "");
 
-      const skills = (detail.skills || "")
-        .split(/[,\n]/)
-        .map((s) => s.trim())
-        .filter(Boolean);
-      const skillParagraphs = skills.length
-        ? [
-            new Paragraph({ text: "Skills", heading: HeadingLevel.HEADING_2 }),
-            new Paragraph({}),
-          ]
-        : [];
+        const fullName = (detail.fullName || "").trim() || "";
 
-      const skillRuns = skills.map((s) => `${s}`);
+        const header = [
+          new Paragraph({ text: fullName, heading: HeadingLevel.TITLE }),
+          new Paragraph({ text: detail.email ? `Email: ${detail.email}` : "" }),
+          new Paragraph({
+            text: detail.mobile ? `Mobile: ${detail.mobile}` : "",
+          }),
+          ...(detail.linkedin
+            ? [new Paragraph({ text: `LinkedIn: ${detail.linkedin}` })]
+            : []),
+          ...(detail.github
+            ? [new Paragraph({ text: `GitHub: ${detail.github}` })]
+            : []),
+          ...(detail.leetcode
+            ? [new Paragraph({ text: `LeetCode: ${detail.leetcode}` })]
+            : []),
+          ...(detail.twitter
+            ? [new Paragraph({ text: `Twitter/X: ${detail.twitter}` })]
+            : []),
+          ...(detail.portfolio
+            ? [new Paragraph({ text: `Portfolio: ${detail.portfolio}` })]
+            : []),
+        ];
 
-      const doc = new Document({
-        sections: [
-          {
-            properties: {},
-            children: [
-              ...header.filter((p) => p.rootKey !== undefined),
-              new Paragraph({ text: " ", spacing: { after: 200 } }),
-              ...(detail.summary
-                ? [
-                    new Paragraph({
-                      text: "Professional Summary",
-                      heading: HeadingLevel.HEADING_2,
-                    }),
-                    new Paragraph({
-                      children: [new TextRun({ text: detail.summary })],
-                    }),
-                  ]
-                : []),
-              ...(skills.length
-                ? [
-                    new Paragraph({
-                      text: "Skills",
-                      heading: HeadingLevel.HEADING_2,
-                    }),
-                    new Paragraph({
-                      text: skillRuns.join(" • "),
-                    }),
-                  ]
-                : []),
-              new Paragraph({ text: " " }),
-              new Paragraph({ text: "Generated by ONEPAGE AI Resume Builder" }),
-            ],
-          },
-        ],
-      });
+        const skills = (detail.skills || "")
+          .split(/[,\n]/)
+          .map((s) => s.trim())
+          .filter(Boolean)
+          .slice(0, 30);
 
-      const blob = await Packer.toBlob(doc);
-      saveAs(blob, `${safeName}_Resume.docx`);
+        const doc = new Document({
+          sections: [
+            {
+              properties: {},
+              children: [
+                ...header,
+                new Paragraph({ text: " " }),
+                ...(detail.professionalSummary ||
+                detail.careerObjective ||
+                detail.summary
+                  ? [
+                      new Paragraph({
+                        text: "Professional Summary",
+                        heading: HeadingLevel.HEADING_2,
+                      }),
+                      new Paragraph({
+                        children: [
+                          new TextRun({
+                            text:
+                              detail.professionalSummary ||
+                              detail.careerObjective ||
+                              detail.summary,
+                          }),
+                        ],
+                      }),
+                    ]
+                  : []),
+                ...(skills.length
+                  ? [
+                      new Paragraph({
+                        text: "Skills",
+                        heading: HeadingLevel.HEADING_2,
+                      }),
+                      new Paragraph({ text: skills.join(" • ") }),
+                    ]
+                  : []),
+              ],
+            },
+          ],
+        });
+
+        const blob = await Packer.toBlob(doc);
+        saveAs(blob, `${safeName}_Resume.docx`);
+      } catch {
+        window.dispatchEvent(
+          new CustomEvent("resume:export-error", {
+            detail: {
+              type: "docx",
+              message: "Word export failed. Please try again.",
+            },
+          })
+        );
+      }
     };
 
     window.addEventListener("resume:download-pdf", handlerPdf);
     window.addEventListener("resume:download-docx", handlerDocx);
+
     return () => {
       window.removeEventListener("resume:download-pdf", handlerPdf);
       window.removeEventListener("resume:download-docx", handlerDocx);
@@ -196,14 +216,7 @@ export default function ResumeOnePageEngine({ children, onFitChange }) {
   }, []);
 
   return (
-    <div
-      ref={wrapRef}
-      className="relative w-full"
-      style={{
-        // A4-ish height for preview area
-        height: 520,
-      }}
-    >
+    <div ref={wrapRef} className="relative w-full" style={{ height: 520 }}>
       <div
         id="resume-root"
         className="absolute inset-0 left-0 top-0 bg-white p-6 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col"
