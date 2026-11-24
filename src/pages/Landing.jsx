@@ -1,158 +1,65 @@
-import { motion } from "framer-motion";
-import { Sparkles, FileText, ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { ArrowRight, FileCheck2, Gauge, LayoutTemplate, ShieldCheck, Users, Wand2 } from "lucide-react";
+import { Button } from "../components/ui.jsx";
+import { STAGES } from "../../shared/profiles.js";
+import { TEMPLATES } from "../../shared/templates.js";
 
-const examples = [
-  {
-    title: "Student ATS Resume",
-    lines: ["Header + Skills", "Projects/Activities", "Clean one-page layout"],
-  },
-  {
-    title: "Fresher / College",
-    lines: [
-      "Education + Projects",
-      "Internship/Certifications",
-      "Balanced spacing",
-    ],
-  },
-  {
-    title: "Professional / Experienced",
-    lines: ["Experience bullets", "Company history", "Premium typography"],
-  },
+const FEATURES = [
+  { icon: Gauge, title: "Always one page", text: "A live A4 preview and a page-fit meter tell you exactly how much room is left — and what to trim if you run over." },
+  { icon: FileCheck2, title: "Real, ATS-friendly PDF", text: "Selectable text, standard fonts and a single column. The PDF matches the preview and never spills onto page two." },
+  { icon: Users, title: "Built for everyone", text: "School students to senior engineers: you only see the sections that fit your situation." },
+  { icon: LayoutTemplate, title: "Six honest templates", text: "Switch templates any time without losing a word you wrote." },
+  { icon: Wand2, title: "Nothing silently removed", text: "When space is tight we suggest what to hide or shorten. You decide." },
+  { icon: ShieldCheck, title: "Free, no strings", text: "No paywalls, credits or watermarks. No account is needed to build and download." },
 ];
 
 export default function Landing() {
-  const navigate = useNavigate();
-
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10">
-        <header className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-500 shadow-soft flex items-center justify-center">
-              <Sparkles className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-slate-900 dark:text-slate-50">
-                ONEPAGE AI RESUME BUILDER
-              </div>
-              <div className="text-xs text-slate-500 dark:text-slate-400">
-                ATS-friendly • One-page • Instant PDF/Word
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={() => navigate("/builder")}
-            className="hidden sm:inline-flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/40 dark:bg-slate-800/40 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-slate-50"
-          >
-            Build Resume
-            <ArrowRight className="h-4 w-4" />
-          </button>
-        </header>
-
-        <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          <div>
-            <motion.h1
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50"
-            >
-              Build a{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-cyan-500">
-                perfect one-page
-              </span>{" "}
-              resume.
-            </motion.h1>
-            <p className="mt-4 text-slate-600 dark:text-slate-300 text-base sm:text-lg leading-relaxed">
-              Smart forms for every profile type—students, freshers,
-              professionals and government aspirants. Live preview always fits
-              A4 with no clipping. Download as PDF or Word.
-            </p>
-
-            <div className="mt-7 flex flex-col sm:flex-row gap-3 sm:items-center">
-              <button
-                onClick={() => navigate("/builder")}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 font-semibold shadow-soft hover:opacity-95 transition"
-              >
-                Build Resume
-                <ArrowRight className="h-5 w-5" />
-              </button>
-              <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                <FileText className="h-4 w-4" />
-                <span>PDF & Word exports • No backend</span>
-              </div>
-            </div>
-
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {[
-                { label: "One-page engine", value: "Always fits" },
-                { label: "ATS-friendly", value: "Clean layout" },
-                { label: "Instant preview", value: "Live updates" },
-              ].map((x) => (
-                <motion.div
-                  key={x.label}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-800/30 backdrop-blur px-4 py-3"
-                >
-                  <div className="text-xs text-slate-500 dark:text-slate-400">
-                    {x.label}
-                  </div>
-                  <div className="font-bold text-slate-900 dark:text-slate-50">
-                    {x.value}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          <div className="relative">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6 }}
-              className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white/40 dark:bg-slate-800/30 backdrop-blur shadow-soft p-5"
-            >
-              <div className="text-sm font-semibold text-slate-900 dark:text-slate-50 mb-3">
-                Resume examples
-              </div>
-              <div className="space-y-3">
-                {examples.map((ex, idx) => (
-                  <motion.div
-                    key={ex.title}
-                    initial={{ opacity: 0, x: idx % 2 === 0 ? -10 : 10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: idx * 0.05 }}
-                    className="rounded-2xl bg-white/60 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800 p-4"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="font-semibold text-slate-900 dark:text-slate-50">
-                        {ex.title}
-                      </div>
-                      <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 shadow-soft" />
-                    </div>
-                    <ul className="mt-2 text-sm text-slate-600 dark:text-slate-300 space-y-1">
-                      {ex.lines.map((l) => (
-                        <li key={l}>• {l}</li>
-                      ))}
-                    </ul>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-
-            <div className="hidden md:block absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-500 opacity-20 blur-2xl" />
-            <div className="hidden md:block absolute -top-6 -right-10 h-28 w-28 rounded-full bg-gradient-to-br from-cyan-500 to-indigo-500 opacity-20 blur-2xl" />
-          </div>
+    <div>
+      <section className="mx-auto max-w-5xl px-4 pb-14 pt-16 text-center sm:pt-24">
+        <p className="mx-auto mb-4 w-fit rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-800 dark:bg-indigo-950 dark:text-indigo-200">100% free · no sign-up needed</p>
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl">A professional <span className="text-indigo-600 dark:text-indigo-400">one-page resume</span>, without the design work</h1>
+        <p className="mx-auto mt-5 max-w-2xl text-lg text-slate-600 dark:text-slate-300">Answer a few questions, fill in what applies to you, and download a clean A4 PDF that applicant tracking systems can read.</p>
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Link to="/builder/new"><Button variant="primary" className="w-full sm:w-auto px-6">Create my resume <ArrowRight className="h-4 w-4" /></Button></Link>
+          <Link to="/demo"><Button className="w-full sm:w-auto px-6" data-testid="try-demo">Try the demo</Button></Link>
         </div>
+      </section>
 
-        <footer className="mt-12 text-center text-xs text-slate-500 dark:text-slate-400">
-          Built for speed • Works offline after load • Ready for Netlify
-        </footer>
-      </div>
+      <section className="mx-auto max-w-6xl px-4 py-10" aria-labelledby="who">
+        <h2 id="who" className="text-center text-2xl font-bold">Made for every stage of your career</h2>
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          {STAGES.map((s) => <span key={s.id} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm dark:border-slate-700 dark:bg-slate-900">{s.label}</span>)}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-10" aria-labelledby="features">
+        <h2 id="features" className="sr-only">Features</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {FEATURES.map(({ icon: Icon, title, text }) => (
+            <div key={title} className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+              <Icon className="h-6 w-6 text-indigo-600 dark:text-indigo-400" aria-hidden />
+              <h3 className="mt-3 font-bold">{title}</h3>
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-10" aria-labelledby="tpl">
+        <h2 id="tpl" className="text-center text-2xl font-bold">Templates</h2>
+        <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {TEMPLATES.map((t) => (
+            <li key={t.id} className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"><p className="font-semibold">{t.label}</p><p className="text-sm text-slate-600 dark:text-slate-300">{t.description}</p></li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-4 py-14 text-center">
+        <h2 className="text-2xl font-bold">See it with sample data first</h2>
+        <p className="mt-2 text-slate-600 dark:text-slate-300">Open a fictional student, fresher, manager or engineer resume, edit it, switch templates and download a PDF.</p>
+        <Link to="/demo"><Button variant="primary" className="mt-5 px-6">Explore the demo</Button></Link>
+      </section>
     </div>
   );
 }

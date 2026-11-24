@@ -1,0 +1,121 @@
+/* A4 resume. Plain CSS (no Tailwind) so the same file styles the live
+   preview, print output and the server-rendered PDF. */
+.rp {
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --ink: #1f2937;
+  --muted: #4b5563;
+  --accent: #1d4ed8;
+  --rule: #d1d5db;
+  --fs: 10pt;
+  --lh: 1.42;
+  --sec-gap: 13px;
+  --entry-gap: 7px;
+  --li-gap: 1.5px;
+  --name-size: 24pt;
+  box-sizing: border-box;
+  width: 210mm;
+  height: 297mm;
+  padding: 14mm 16mm;
+  overflow: hidden;
+  position: relative;
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--fs);
+  line-height: var(--lh);
+  font-kerning: normal;
+  text-rendering: optimizeLegibility;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.rp * { box-sizing: border-box; margin: 0; padding: 0; }
+.rp a { color: inherit; text-decoration: none; }
+.rp-body { display: block; }
+.rp-body > * + * { margin-top: var(--sec-gap); }
+
+/* Density: spacing tightens first; font never goes below 9pt. */
+.rp[data-density="1"] { --lh: 1.34; --sec-gap: 10px; --entry-gap: 5px; --li-gap: 1px; }
+.rp[data-density="2"] { --fs: 9.5pt; --lh: 1.3; --sec-gap: 8px; --entry-gap: 4px; --li-gap: 0.5px; --name-size: 22pt; }
+.rp[data-density="3"] { --fs: 9pt; --lh: 1.26; --sec-gap: 6px; --entry-gap: 3px; --li-gap: 0px; --name-size: 21pt; }
+
+/* ---------- shared structure ---------- */
+.rp-name { font-size: var(--name-size); line-height: 1.15; font-weight: 700; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.rp-name-long { font-size: calc(var(--name-size) * 0.78); }
+.rp-title { font-size: 1.15em; color: var(--muted); margin-top: 2px; overflow-wrap: anywhere; }
+.rp-contact { margin-top: 5px; color: var(--muted); font-size: 0.95em; overflow-wrap: anywhere; }
+.rp-sep { color: #9ca3af; white-space: pre; }
+.rp-sec-title { font-size: 0.95em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.rp-entry + .rp-entry { margin-top: var(--entry-gap); }
+.rp-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.rp-h { font-weight: 600; overflow-wrap: anywhere; }
+.rp-date, .rp-meta { color: var(--muted); font-size: 0.94em; white-space: nowrap; flex: none; }
+.rp-sub { color: var(--muted); overflow-wrap: anywhere; }
+.rp-text { overflow-wrap: anywhere; }
+.rp-list { list-style: disc; padding-left: 1.15em; margin-top: 1px; }
+.rp-list li { margin-top: var(--li-gap); overflow-wrap: anywhere; padding-left: 1px; }
+.rp-inline { overflow-wrap: anywhere; }
+.rp-inline + .rp-inline { margin-top: 2px; }
+
+/* ---------- Modern Professional ---------- */
+.tpl-modern .rp-name { color: var(--accent); }
+.tpl-modern .rp-head { padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+.tpl-modern .rp-sec-title { color: var(--accent); border-bottom: 1px solid var(--rule); padding-bottom: 2px; margin-bottom: 5px; }
+
+/* ---------- Minimal / Clean ---------- */
+.tpl-minimal { --accent: #111827; --font: "Inter", system-ui, sans-serif; --name-size: 23pt; }
+.tpl-minimal .rp-head { text-align: center; }
+.tpl-minimal .rp-name { font-weight: 600; letter-spacing: 0.02em; }
+.tpl-minimal .rp-title { font-size: 1.08em; }
+.tpl-minimal .rp-sec-title { font-weight: 600; letter-spacing: 0.16em; font-size: 0.86em; color: #374151; margin-bottom: 5px; }
+.tpl-minimal .rp-h { font-weight: 600; }
+.tpl-minimal .rp-list { list-style: "– "; }
+
+/* ---------- Student / Academic ---------- */
+.tpl-academic { --font: var(--serif); --accent: #7c2d12; --fs: 10.5pt; --name-size: 25pt; }
+.tpl-academic[data-density="2"] { --fs: 10pt; }
+.tpl-academic[data-density="3"] { --fs: 9.5pt; }
+.tpl-academic .rp-name { color: #111827; }
+.tpl-academic .rp-title { color: var(--accent); font-weight: 600; }
+.tpl-academic .rp-head { padding-bottom: 7px; border-bottom: 1px solid #111827; }
+.tpl-academic .rp-sec-title { font-variant: small-caps; text-transform: none; font-size: 1.12em; letter-spacing: 0.06em; color: var(--accent); border-bottom: 1px solid var(--rule); padding-bottom: 1px; }
+
+/* ---------- Technical / Developer ---------- */
+.tpl-technical { --accent: #0f766e; --lh: 1.36; --sec-gap: 11px; --name-size: 22pt; }
+.tpl-technical[data-density="1"] { --lh: 1.3; }
+.tpl-technical[data-density="2"] { --lh: 1.27; }
+.tpl-technical[data-density="3"] { --lh: 1.24; }
+.tpl-technical .rp-name { letter-spacing: -0.02em; }
+.tpl-technical .rp-title { color: var(--accent); font-weight: 600; }
+.tpl-technical .rp-head { padding-bottom: 7px; border-bottom: 1px solid var(--rule); }
+.tpl-technical .rp-sec-title { color: #111827; border-left: 3px solid var(--accent); padding-left: 7px; letter-spacing: 0.1em; margin-bottom: 5px; }
+.tpl-technical .rp-sub { color: var(--accent); }
+
+/* ---------- Corporate / Traditional ---------- */
+.tpl-traditional { --font: var(--serif); --accent: #000; --ink: #111; --muted: #374151; --fs: 10.5pt; --name-size: 26pt; }
+.tpl-traditional[data-density="2"] { --fs: 10pt; }
+.tpl-traditional[data-density="3"] { --fs: 9.5pt; }
+.tpl-traditional .rp-head { text-align: center; padding-bottom: 6px; }
+.tpl-traditional .rp-name { text-transform: uppercase; letter-spacing: 0.06em; font-size: calc(var(--name-size) * 0.85); }
+.tpl-traditional .rp-name-long { font-size: calc(var(--name-size) * 0.66); }
+.tpl-traditional .rp-sec-title { color: #000; border-bottom: 1.5px solid #000; padding-bottom: 1px; margin-bottom: 5px; letter-spacing: 0.1em; }
+
+/* ---------- Creative / Modern ---------- */
+.tpl-creative { --accent: #4f46e5; padding-top: 0; }
+.tpl-creative .rp-head { background: var(--accent); color: #fff; margin: 0 -16mm; padding: 11mm 16mm 7mm; }
+.tpl-creative .rp-title { color: #e0e7ff; font-weight: 500; }
+.tpl-creative .rp-contact { color: #e0e7ff; }
+.tpl-creative .rp-contact .rp-sep { color: #a5b4fc; }
+.tpl-creative .rp-body > .rp-head + * { margin-top: 14px; }
+.tpl-creative .rp-sec-title { color: var(--accent); font-size: 1em; display: flex; align-items: center; gap: 8px; }
+.tpl-creative .rp-sec-title::after { content: ""; flex: 1; height: 1px; background: #c7d2fe; }
+.tpl-creative .rp-h { color: #111827; }
+
+/* ---------- Print: only the resume, exact A4 ---------- */
+@page { size: A4; margin: 0; }
+@media print {
+  html, body { margin: 0 !important; padding: 0 !important; background: #fff !important; }
+  body.printing-resume > *:not(.print-root) { display: none !important; }
+  .print-root { display: block !important; position: static !important; transform: none !important; }
+  .print-root .rp { box-shadow: none !important; transform: none !important; }
+}
